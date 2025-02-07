@@ -277,9 +277,16 @@ class Main:
             screen.blit(signalTexts[i],signalTimerCoods[i])
 
         # display vehicle count beside the signal
-        for i in range(0,noOfSignals):
+        for i in range(0, noOfSignals):
             countText = font.render(f"Vehicles: {counts[i]}", True, white, black)
-            screen.blit(countText, (signalCoods[i][0] + 50, signalCoods[i][1] + 50))  # Reverted position
+            if i == 0:  # Right signal (top-left corner)
+                screen.blit(countText, (50, 50))  # Top-left corner
+            elif i == 1:  # Down signal (top-right corner)
+                screen.blit(countText, (screenWidth - 150, 50))  # Top-right corner
+            elif i == 2:  # Left signal (bottom-left corner)
+                screen.blit(countText, (screenWidth - 150, screenHeight - 50)) # Bottom-left corner
+            elif i == 3:  # Up signal (bottom-right corner)
+                screen.blit(countText, (50, screenHeight - 50)) # Bottom-right corner  # Reverted position
 
         # display the vehicles
         for vehicle in simulation:  
