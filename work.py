@@ -15,7 +15,7 @@ currentGreen = 0   # Indicates which signal is green currently
 nextGreen = (currentGreen+1)%noOfSignals    # Indicates which signal will turn green next
 currentYellow = 0   # Indicates whether yellow signal is on or off 
 
-speeds = {'car':2.25, 'bus':1.8, 'truck':1.8, 'bike':2.5}  # average speeds of vehicles
+speeds = {'car':2.5, 'bus':1.5, 'truck':1.2, 'bike':4}  # average speeds of vehicles
 
 # Coordinates of vehicles' start
 x = {'right':[0,0,0], 'down':[755,727,697], 'left':[1400,1400,1400], 'up':[602,627,657]}    
@@ -123,15 +123,30 @@ def countVehicles():
         direction = directionNumbers[i]
         for lane in [0, 1, 2]:
             for vehicle in vehicles[direction][lane]:
-                if not vehicle.crossed:  # Only count vehicles that haven't crossed the stop line
-                    if direction == 'right' and vehicle.x + vehicle.image.get_rect().width < stopLines[direction] + 200:  # Within 200 pixels of the stop line
-                        counts[i] += 1
-                    elif direction == 'left' and vehicle.x > stopLines[direction] - 200:
-                        counts[i] += 1
-                    elif direction == 'down' and vehicle.y + vehicle.image.get_rect().height < stopLines[direction] + 200:
-                        counts[i] += 1
-                    elif direction == 'up' and vehicle.y > stopLines[direction] - 200:
-                        counts[i] += 1
+                if not vehicle.crossed:
+                    try:
+                        # Check if image exists and get rect
+                        rect = vehicle.image.get_rect()
+                        if direction == 'right':
+                            if (vehicle.x + rect.width > stopLines[direction] - 590 and 
+                                vehicle.x + rect.width < stopLines[direction]):
+                                counts[i] += 1
+                        elif direction == 'left':
+                            if (vehicle.x < stopLines[direction] + 590 and 
+                                vehicle.x > stopLines[direction]):
+                                counts[i] += 1
+                        elif direction == 'down':
+                            if (vehicle.y + rect.height > stopLines[direction] - 330 and 
+                                vehicle.y + rect.height < stopLines[direction]):
+                                counts[i] += 1
+                        elif direction == 'up':
+                            if (vehicle.y < stopLines[direction] + 250 and 
+                                vehicle.y > stopLines[direction]):
+                                counts[i] += 1
+                    except AttributeError:
+                        # Handle missing image
+                        print(f"Missing image for {vehicle.vehicleClass} in {direction}")
+                        continue
     return counts
 
 # Initialization of signals with default values
