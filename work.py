@@ -89,7 +89,7 @@ pygame.init()
 simulation = pygame.sprite.Group()
 
 class TrafficSignal:
-    def _init_(self, red, yellow, green, minimum, maximum):
+    def __init__(self, red, yellow, green, minimum, maximum):
         self.red = red
         self.yellow = yellow
         self.green = green
@@ -99,8 +99,8 @@ class TrafficSignal:
         self.totalGreenTime = 0
         
 class Vehicle(pygame.sprite.Sprite):
-    def _init_(self, lane, vehicleClass, direction_number, direction, will_turn):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self, lane, vehicleClass, direction_number, direction, will_turn):
+        pygame.sprite.Sprite.__init__(self)
         self.lane = lane
         self.vehicleClass = vehicleClass
         self.speed = speeds[vehicleClass]
