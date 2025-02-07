@@ -74,9 +74,9 @@ vehicleCountCoods = [(480,210),(880,210),(880,550),(480,550)]
 vehicleCountTexts = ["0", "0", "0", "0"]
 
 # Coordinates of stop lines
-stopLines = {'right': 590, 'down': 330, 'left': 800, 'up': 535}
-defaultStop = {'right': 580, 'down': 320, 'left': 810, 'up': 545}
-stops = {'right': [580,580,580], 'down': [320,320,320], 'left': [810,810,810], 'up': [545,545,545]}
+stopLines = {'right': 570, 'down': 330, 'left': 800, 'up': 535}
+defaultStop = {'right': 560, 'down': 320, 'left': 810, 'up': 545}
+stops = {'right': [580,580,580], 'down': [320,320,320], 'left': [810,810,810], 'up': [530,530,530]}
 
 mid = {'right': {'x':705, 'y':445}, 'down': {'x':695, 'y':450}, 'left': {'x':695, 'y':425}, 'up': {'x':695, 'y':400}}
 rotationAngle = 3
@@ -89,7 +89,7 @@ pygame.init()
 simulation = pygame.sprite.Group()
 
 class TrafficSignal:
-    def __init__(self, red, yellow, green, minimum, maximum):
+    def _init_(self, red, yellow, green, minimum, maximum):
         self.red = red
         self.yellow = yellow
         self.green = green
@@ -99,8 +99,8 @@ class TrafficSignal:
         self.totalGreenTime = 0
         
 class Vehicle(pygame.sprite.Sprite):
-    def __init__(self, lane, vehicleClass, direction_number, direction, will_turn):
-        pygame.sprite.Sprite.__init__(self)
+    def _init_(self, lane, vehicleClass, direction_number, direction, will_turn):
+        pygame.sprite.Sprite._init_(self)
         self.lane = lane
         self.vehicleClass = vehicleClass
         self.speed = speeds[vehicleClass]
@@ -117,7 +117,10 @@ class Vehicle(pygame.sprite.Sprite):
         self.index = len(vehicles[direction][lane]) - 1
         path = vehicleClass + ".png"
         self.originalImage = pygame.image.load(path)
-        self.currentImage = pygame.image.load(path)
+        self.image_width = 50
+        self.image_height = 50
+        self.originalImage = pygame.transform.scale(self.originalImage, (self.image_width, self.image_height))
+        self.currentImage = self.originalImage
 
     
         if(direction=='right'):
@@ -295,14 +298,12 @@ def setTime():
         vehicle = vehicles[directionNumbers[nextGreen]][0][j]
         if(vehicle.crossed==0):
             vclass = vehicle.vehicleClass
-            # print(vclass)
             noOfBikes += 1
     for i in range(1,3):
         for j in range(len(vehicles[directionNumbers[nextGreen]][i])):
             vehicle = vehicles[directionNumbers[nextGreen]][i][j]
             if(vehicle.crossed==0):
                 vclass = vehicle.vehicleClass
-                # print(vclass)
                 if(vclass=='car'):
                     noOfCars += 1
                 elif(vclass=='bus'):
@@ -314,6 +315,7 @@ def setTime():
     # print(noOfCars)
     greenTime = math.ceil(((noOfCars*carTime) + (noOfRickshaws*rickshawTime) + (noOfBuses*busTime) + (noOfTrucks*truckTime)+ (noOfBikes*bikeTime))/(noOfLanes+1))
     # greenTime = math.ceil((noOfVehicles)/noOfLanes) 
+    
     print('Green Time: ',greenTime)
     if(greenTime<defaultMinimum):
         greenTime = defaultMinimum
@@ -383,11 +385,16 @@ def updateValues():
 # Generating vehicles in the simulation
 def generateVehicles():
     while(True):
+
+        time.sleep(2)
+
         vehicle_type = random.randint(0,4)
+
         if(vehicle_type==4):
             lane_number = 0
         else:
-            lane_number = random.randint(0,1) + 1
+            lane_number = random.randint(1,2)
+
         will_turn = 0
         if(lane_number==2):
             temp = random.randint(0,4)
@@ -446,6 +453,7 @@ class Main:
 
     # Setting background image i.e. image of intersection
     background = pygame.image.load('background.jpeg')
+    background = pygame.transform.scale(background, screenSize)
 
     screen = pygame.display.set_mode(screenSize)
     pygame.display.set_caption("SIMULATION")
@@ -454,6 +462,12 @@ class Main:
     redSignal = pygame.image.load('Red Light.png')
     yellowSignal = pygame.image.load('Yellow light.png')
     greenSignal = pygame.image.load('Green Light.jpeg')
+
+
+    signal_size = (50, 50)
+    redSignal = pygame.transform.scale(redSignal, signal_size)
+    yellowSignal = pygame.transform.scale(yellowSignal, signal_size)
+    greenSignal = pygame.transform.scale(greenSignal, signal_size)
     font = pygame.font.Font(None, 30)
 
     thread3 = threading.Thread(name="generateVehicles",target=generateVehicles, args=())    # Generating vehicles
