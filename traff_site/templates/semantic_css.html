@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;1,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='semantic.css')}}"
+    />
+  </head>
+  <body>
+    <header><div class="htext">Team ASL</div></header>
+    <nav>
+      <a href="#Home1">Home</a>
+      <div>|</div>
+      <a href="https://www.google.co.in/">Custom Model</a>
+      <div>|</div>
+      <a href="#contact-form">Contact Us</a>
+    </nav>
+    <article id="Home1">
+      <section>
+        <h1>AI – Powered Smart Traffic Optimization System</h1>
+
+        This project proposes a software-based AI-driven system to optimize
+        urban traffic flow. Using real time traffic data, the system dynamically
+        adjusts traffic light timings, predicts congestion patterns, and
+        provides actionable insights for city planners. The solution integrates
+        machine learning models with visualization tools, creating a scalable
+        and fully software-driven solution that aligns with smart city
+        initiatives.
+      </section>
+      <section>
+        <div class="imflex">
+          <h1 class="in">Model Working</h1>
+          <p>
+            Here's a side by side video of how our model predicts the car type
+            using our custom model:
+          </p>
+          <iframe
+            src="static\\og.mp4"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+          <iframe
+            src="static\\result.mp4"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <div class="cent">
+          <p>model accuracy:</p>
+          <img class="img1" src="static\\results.png" />
+          <p>Data log according to Formula:</p>
+          <img class="img2" src="static\\log.png" />
+        </div>
+      </section>
+      <section>
+        <div class="imflex">
+          <h1 class="in">Simulation</h1>
+          <p>
+            Here's a side by side simulated comparison of our system vs a static
+            timer based system
+          </p>
+          <iframe
+            src="static\\Static_Time_Demo.mp4"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+          <iframe
+            src="static\\Real_Time_Demo.mp4"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    </article>
+    <aside class="sticky_box">
+      Quick Links :
+      <a
+        href="https://github.com/SukrutaNadkarni/Advanced-Traffic-Control-System-for-Urban-Road-Network/"
+        target="_blank"
+        >Github</a
+      >
+    </aside>
+    <footer>
+      <div class="contact-us" id="contact-form">
+        <h2>Contact Us</h2>
+        <p>
+          We'd love to hear from you! Reach out to us through any of the
+          following methods:
+        </p>
+        <ul class="contact-info">
+          <li>
+            <strong>Email :</strong>
+            <a href="mailto:info@acceptus.com">info@acceptus.com</a>
+          </li>
+          <li>
+            <strong>Phone :</strong>
+            <a href="tel:+1234567890">+1 (234) 567-890</a>
+          </li>
+          <li><strong>Address :</strong> 123 Nature Lane, Greenfield, Earth</li>
+        </ul>
+        <form class="contact-form" action="/submit-contact" method="post">
+          <label for="name">Your Name:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="email">Your Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="message">Your Message:</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </footer>
+  </body>
+</html>
