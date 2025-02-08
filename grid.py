@@ -27,27 +27,27 @@ intersections = [[{
 } for _ in range(GRID_COLS)] for _ in range(GRID_ROWS)]
 
 noOfSignals = 4
-speeds = {'car': 4.5, 'bus': 3, 'truck': 2.25, 'bike': 4, 'ambulance': 4.3}  # average speeds of vehicles
+speeds = {'car': 2.25, 'bus': 1.5, 'truck': 1.125, 'bike': 2, 'ambulance': 2.15}  # Reduced speeds for resized intersections
 
-# Coordinates of vehicles' start (adjusted for each intersection)
-x = {'right': [0, 0, 0], 'down': [755, 727, 697], 'left': [1400, 1400, 1400], 'up': [602, 627, 657]}
-y = {'right': [348, 370, 398], 'down': [0, 0, 0], 'left': [498, 466, 436], 'up': [800, 800, 800]}
+# Coordinates of vehicles' start (scaled down for resized intersections)
+x = {'right': [0, 0, 0], 'down': [377, 363, 348], 'left': [700, 700, 700], 'up': [301, 313, 328]}
+y = {'right': [174, 185, 199], 'down': [0, 0, 0], 'left': [249, 233, 218], 'up': [400, 400, 400]}
 
 vehicleTypes = {0: 'car', 1: 'bus', 2: 'truck', 3: 'bike', 4: 'ambulance'}
 directionNumbers = {0: 'right', 1: 'down', 2: 'left', 3: 'up'}
 weights = {'car': 2, 'bus': 4, 'truck': 6, 'bike': 1, 'ambulance': 1000}
 
-# Coordinates of signal image, timer, and vehicle count (adjusted for each intersection)
-signalCoods = [(530, 230), (810, 230), (810, 570), (530, 570)]
-signalTimerCoods = [(530, 210), (810, 210), (810, 550), (530, 550)]
+# Coordinates of signal image, timer, and vehicle count (scaled down for resized intersections)
+signalCoods = [(265, 50), (410, 50), (410, 260), (265, 260)]
+signalTimerCoods = [(270,25), (415, 25), (415, 240), (270, 240)]
 
-# Coordinates of stop lines (adjusted for each intersection)
-stopLines = {'right': 590, 'down': 330, 'left': 800, 'up': 535}
-defaultStop = {'right': 580, 'down': 320, 'left': 810, 'up': 545}
+# Coordinates of stop lines (scaled down for resized intersections)
+stopLines = {'right': 295, 'down': 165, 'left': 400, 'up': 267}
+defaultStop = {'right': 290, 'down': 160, 'left': 405, 'up': 272}
 
 # Gap between vehicles
-stoppingGap = 15  # stopping gap
-movingGap = 15  # moving gap
+stoppingGap = 7  # Reduced stopping gap for resized intersections
+movingGap = 7  # Reduced moving gap for resized intersections
 
 pygame.init()
 simulation = pygame.sprite.Group()
@@ -70,8 +70,8 @@ class Vehicle(pygame.sprite.Sprite):
         self.direction_number = direction_number
         self.direction = direction
         self.intersection = intersection  # Track which intersection the vehicle is in
-        self.x = x[direction][lane] + intersection[1] * 1400  # Adjust x-coordinate for intersection
-        self.y = y[direction][lane] + intersection[0] * 800  # Adjust y-coordinate for intersection
+        self.x = x[direction][lane] + intersection[1] * 700  # Adjust x-coordinate for intersection
+        self.y = y[direction][lane] + intersection[0] * 400  # Adjust y-coordinate for intersection
         self.crossed = 0
         self.target_intersection = None  # Track the next intersection the vehicle is heading to
 
@@ -100,7 +100,7 @@ class Vehicle(pygame.sprite.Sprite):
                 self.stop = intersections[self.intersection[0]][self.intersection[1]]['vehicles'][direction][lane][
                                 self.index - 1].stop + self.image.get_rect().height + stoppingGap
         else:
-            self.stop = defaultStop[direction] + intersection[1] * 1400 if direction in ['right', 'left'] else defaultStop[direction] + intersection[0] * 800
+            self.stop = defaultStop[direction] + intersection[1] * 700 if direction in ['right', 'left'] else defaultStop[direction] + intersection[0] * 400
 
         # Update starting coordinates for the next vehicle
         if direction == 'right':
@@ -121,7 +121,7 @@ class Vehicle(pygame.sprite.Sprite):
     def move(self):
         # Move the vehicle within the current intersection
         if self.direction == 'right':
-            if self.crossed == 0 and self.x + self.image.get_rect().width > stopLines[self.direction] + self.intersection[1] * 1400:
+            if self.crossed == 0 and self.x + self.image.get_rect().width > stopLines[self.direction] + self.intersection[1] * 700:
                 self.crossed = 1
             if ((self.x + self.image.get_rect().width <= self.stop or self.crossed == 1 or (
                     intersections[self.intersection[0]][self.intersection[1]]['currentGreen'] == 0 and
@@ -162,7 +162,7 @@ def countVehicles(intersection):
                         else:
                             # For other vehicles, count only if they are within a certain distance from the stop line
                             if direction == 'right':
-                                if (vehicle.x + rect.width > stopLines[direction] + vehicle.intersection[1] * 1400 - 330 and vehicle.x + rect.width < stopLines[direction] + vehicle.intersection[1] * 1400):
+                                if (vehicle.x + rect.width > stopLines[direction] + vehicle.intersection[1] * 700 - 165 and vehicle.x + rect.width < stopLines[direction] + vehicle.intersection[1] * 700):
                                     counts[i] += 1
                                     if vehicle.vehicleClass == 'car':
                                         noOfCars[i] += 1
@@ -173,7 +173,7 @@ def countVehicles(intersection):
                                     elif vehicle.vehicleClass == 'bike':
                                         noOfBikes[i] += 1
                             elif direction == 'left':
-                                if (vehicle.x < stopLines[direction] + vehicle.intersection[1] * 1400 + 330 and vehicle.x > stopLines[direction] + vehicle.intersection[1] * 1400):
+                                if (vehicle.x < stopLines[direction] + vehicle.intersection[1] * 700 + 165 and vehicle.x > stopLines[direction] + vehicle.intersection[1] * 700):
                                     counts[i] += 1
                                     if vehicle.vehicleClass == 'car':
                                         noOfCars[i] += 1
@@ -184,7 +184,7 @@ def countVehicles(intersection):
                                     elif vehicle.vehicleClass == 'bike':
                                         noOfBikes[i] += 1
                             elif direction == 'down':
-                                if (vehicle.y + rect.height > stopLines[direction] + vehicle.intersection[0] * 800 - 330 and vehicle.y + rect.height < stopLines[direction] + vehicle.intersection[0] * 800):
+                                if (vehicle.y + rect.height > stopLines[direction] + vehicle.intersection[0] * 400 - 165 and vehicle.y + rect.height < stopLines[direction] + vehicle.intersection[0] * 400):
                                     counts[i] += 1
                                     if vehicle.vehicleClass == 'car':
                                         noOfCars[i] += 1
@@ -195,7 +195,7 @@ def countVehicles(intersection):
                                     elif vehicle.vehicleClass == 'bike':
                                         noOfBikes[i] += 1
                             elif direction == 'up':
-                                if (vehicle.y < stopLines[direction] + vehicle.intersection[0] * 800 + 250 and vehicle.y > stopLines[direction] + vehicle.intersection[0] * 800):
+                                if (vehicle.y < stopLines[direction] + vehicle.intersection[0] * 400 + 125 and vehicle.y > stopLines[direction] + vehicle.intersection[0] * 400):
                                     counts[i] += 1
                                     if vehicle.vehicleClass == 'car':
                                         noOfCars[i] += 1
@@ -272,7 +272,7 @@ def repeat():
                 intersection['currentYellow'] = 1
                 for i in range(0, 3):
                     for vehicle in intersection['vehicles'][directionNumbers[intersection['currentGreen']]][i]:
-                        vehicle.stop = defaultStop[directionNumbers[intersection['currentGreen']]] + intersection[1] * 1400 if directionNumbers[intersection['currentGreen']] in ['right', 'left'] else defaultStop[directionNumbers[intersection['currentGreen']]] + intersection[0] * 800
+                        vehicle.stop = defaultStop[directionNumbers[intersection['currentGreen']]] + intersection[1] * 700 if directionNumbers[intersection['currentGreen']] in ['right', 'left'] else defaultStop[directionNumbers[intersection['currentGreen']]] + intersection[0] * 400
                 while intersection['signals'][intersection['currentGreen']].yellow > 0:
                     updateValues(intersection)
                     time.sleep(1)
@@ -334,13 +334,13 @@ class Main:
     white = (255, 255, 255)
 
     # Screensize
-    screenWidth = 1400 * GRID_COLS
-    screenHeight = 800 * GRID_ROWS
+    screenWidth = 1400
+    screenHeight = 800
     screenSize = (screenWidth, screenHeight)
 
     # Setting background image i.e. image of intersection
-    background = pygame.image.load('images/intersection.png')
-
+    background = pygame.image.load('images/intersection_new.jpg')  # Load the merged 2x2 background image
+    background = pygame.transform.scale(background, (screenWidth, screenHeight))
     screen = pygame.display.set_mode(screenSize)
     pygame.display.set_caption("SIMULATION")
 
@@ -359,46 +359,44 @@ class Main:
             if event.type == pygame.QUIT:
                 sys.exit()
 
-        screen.fill(black)  # Clear the screen
+        screen.blit(background, (0, 0))  # Display the merged 2x2 background image
+
         for row in range(GRID_ROWS):
             for col in range(GRID_COLS):
-                # Draw the background image for each intersection
-                screen.blit(background, (col * 1400, row * 800))
-
                 intersection = intersections[row][col]
                 counts, noOfCars, noOfBuses, noOfTrucks, noOfBikes, noOfAmbulances, weighted = countVehicles(intersection)
                 for i in range(0, noOfSignals):
                     if i == intersection['currentGreen']:
                         if intersection['currentYellow'] == 1:
                             intersection['signals'][i].signalText = intersection['signals'][i].yellow
-                            screen.blit(yellowSignal, (signalCoods[i][0] + col * 1400, signalCoods[i][1] + row * 800))
+                            screen.blit(yellowSignal, (signalCoods[i][0] + col * 700, signalCoods[i][1] + row * 400))
                         else:
                             intersection['signals'][i].signalText = intersection['signals'][i].green
-                            screen.blit(greenSignal, (signalCoods[i][0] + col * 1400, signalCoods[i][1] + row * 800))
+                            screen.blit(greenSignal, (signalCoods[i][0] + col * 700, signalCoods[i][1] + row * 400))
                     else:
                         if intersection['signals'][i].red <= 10:
                             intersection['signals'][i].signalText = intersection['signals'][i].red
                         else:
                             intersection['signals'][i].signalText = "---"
-                        screen.blit(redSignal, (signalCoods[i][0] + col * 1400, signalCoods[i][1] + row * 800))
+                        screen.blit(redSignal, (signalCoods[i][0] + col * 700, signalCoods[i][1] + row * 400))
                 signalTexts = ["", "", "", ""]
 
                 # display signal timer
                 for i in range(0, noOfSignals):
                     signalTexts[i] = font.render(str(intersection['signals'][i].signalText), True, white, black)
-                    screen.blit(signalTexts[i], (signalTimerCoods[i][0] + col * 1400, signalTimerCoods[i][1] + row * 800))
+                    screen.blit(signalTexts[i], (signalTimerCoods[i][0] + col * 700, signalTimerCoods[i][1] + row * 400))
 
                 # display vehicle count beside the signal
                 for i in range(0, noOfSignals):
                     countText = font.render(f"Vehicles: {counts[i]}", True, white, black)
                     if i == 0:  # Right signal (top-left corner)
-                        screen.blit(countText, (50 + col * 1400, 50 + row * 800))  # Top-left corner
+                        screen.blit(countText, (50 + col * 700, 50 + row * 400))  # Top-left corner
                     elif i == 1:  # Down signal (top-right corner)
-                        screen.blit(countText, (screenWidth - 150 + col * 1400, 50 + row * 800))  # Top-right corner
+                        screen.blit(countText, (screenWidth // 2 - 150 + col * 700, 50 + row * 400))  # Top-right corner
                     elif i == 2:  # Left signal (bottom-left corner)
-                        screen.blit(countText, (screenWidth - 150 + col * 1400, screenHeight - 50 + row * 800))  # Bottom-left corner
+                        screen.blit(countText, (screenWidth // 2 - 150 + col * 700, screenHeight // 2 - 50 + row * 400))  # Bottom-left corner
                     elif i == 3:  # Up signal (bottom-right corner)
-                        screen.blit(countText, (50 + col * 1400, screenHeight - 50 + row * 800))  # Bottom-right corner
+                        screen.blit(countText, (50 + col * 700, screenHeight // 2 - 50 + row * 400))  # Bottom-right corner
 
         # display the vehicles
         for vehicle in simulation:
