@@ -6,9 +6,9 @@ import sys
 import math
 
 # Default values of signal timers
-defaultGreen = {0: 5, 1: 5, 2: 5, 3: 5}  # Default green time for each signal
+defaultGreen = {0: 30, 1: 30, 2: 30, 3: 30}  # Default green time for each signal
 defaultRed = 150
-defaultYellow = 3
+defaultYellow = 5
 
 # Average times for vehicles to pass the intersection
 carTime = 2
@@ -227,12 +227,12 @@ def repeat():
         counts, noOfCars, noOfBuses, noOfTrucks, noOfBikes = countVehicles()
         
         # Calculate green time based on vehicle counts and their average crossing times
-        total_vehicles = noOfCars[currentGreen] + noOfBuses[currentGreen] + noOfTrucks[currentGreen] + noOfBikes[currentGreen]
-        greenTime = math.ceil(
-            (noOfCars[currentGreen] * carTime + noOfBuses[currentGreen] * busTime + noOfTrucks[currentGreen] * truckTime +
-             noOfBikes[currentGreen] * bikeTime)/2)  # Divide by number of lanes (2)
+        #total_vehicles = noOfCars[currentGreen] + noOfBuses[currentGreen] + noOfTrucks[currentGreen] + noOfBikes[currentGreen]
+        #greenTime = math.ceil(
+        #    (noOfCars[currentGreen] * carTime + noOfBuses[currentGreen] * busTime + noOfTrucks[currentGreen] * truckTime +
+         #    noOfBikes[currentGreen] * bikeTime)/2)  # Divide by number of lanes (2)
         # Ensure green time is within reasonable limits
-        greenTime = max(5, min(60, greenTime))  # Minimum 10 seconds, maximum 60 seconds
+        greenTime = 30  # Minimum 10 seconds, maximum 60 seconds
 
        #print(f"Green Time for Signal {currentGreen}: {greenTime} (Cars: {noOfCars[currentGreen]}, Buses: {noOfBuses[currentGreen]}, Trucks: {noOfTrucks[currentGreen]}, Bikes: {noOfBikes[currentGreen]})")
 
@@ -329,6 +329,23 @@ class Main:
     thread2.daemon = True
     thread2.start()
 
+    def calculate_next_green_times():
+        """Calculates when each signal will turn green based on the current traffic cycle."""
+        next_green_times = [0, 0, 0, 0]
+        total_time = 0
+
+        for i in range(noOfSignals):
+            if i == currentGreen:
+                remaining_green = signals[i].green
+                remaining_yellow = signals[i].yellow if currentYellow else 0
+                total_time += remaining_green + remaining_yellow
+                next_green_times[i] = 0  # Already green
+            else:
+                next_green_times[i] = total_time
+                total_time += defaultGreen[i] + defaultYellow
+
+        return next_green_times
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -336,7 +353,9 @@ class Main:
 
         screen.blit(background, (0, 0))  # display background in simulation
         counts, noOfCars, noOfBuses, noOfTrucks, noOfBikes = countVehicles()
-        for i in range(0, noOfSignals):  # display signal and set timer according to current status: green, yellow, or red
+        next_green_times = calculate_next_green_times()
+
+        for i in range(0, noOfSignals):  # Display signal and set timer according to status
             if i == currentGreen:
                 if currentYellow == 1:
                     signals[i].signalText = signals[i].yellow
@@ -350,30 +369,55 @@ class Main:
                 else:
                     signals[i].signalText = "---"
                 screen.blit(redSignal, signalCoods[i])
+
         signalTexts = ["", "", "", ""]
 
-        # display signal timer
+        # Display signal timer
         for i in range(0, noOfSignals):
             signalTexts[i] = font.render(str(signals[i].signalText), True, white, black)
             screen.blit(signalTexts[i], signalTimerCoods[i])
 
-        # display vehicle count beside the signal
+        # Display vehicle count beside the signal
         for i in range(0, noOfSignals):
             countText = font.render(f"Vehicles: {counts[i]}", True, white, black)
-            if i == 0:  # Right signal (top-left corner)
-                screen.blit(countText, (50, 50))  # Top-left corner
-            elif i == 1:  # Down signal (top-right corner)
-                screen.blit(countText, (screenWidth - 150, 50))  # Top-right corner
-            elif i == 2:  # Left signal (bottom-left corner)
-                screen.blit(countText, (screenWidth - 150, screenHeight - 50))  # Bottom-left corner
-            elif i == 3:  # Up signal (bottom-right corner)
-                screen.blit(countText, (50, screenHeight - 50))  # Bottom-right corner
+            if i == 0:
+                screen.blit(countText, (50, 50))
+            elif i == 1:
+                screen.blit(countText, (screenWidth - 150, 50))
+            elif i == 2:
+                screen.blit(countText, (screenWidth - 150, screenHeight - 50))
+            elif i == 3:
+                screen.blit(countText, (50, screenHeight - 50))
 
-        # display the vehicles
+        # Display time remaining until each signal turns green
+        for i in range(noOfSignals):  # Loop through all signals
+            if i == currentGreen:
+                if currentYellow == 1:
+                    signals[i].signalText = signals[i].yellow  # Show remaining yellow time
+                    screen.blit(yellowSignal, signalCoods[i])
+                else:
+                    signals[i].signalText = signals[i].green  # Show remaining green time
+                    screen.blit(greenSignal, signalCoods[i])
+            else:
+        # Calculate time until this signal turns green
+                time_until_green = signals[currentGreen].green + signals[currentGreen].yellow  # Time for the current green signal to finish
+                next_index = nextGreen
+                while next_index != i:  # Add times for all signals before this one turns green
+                    time_until_green += signals[next_index].green + signals[next_index].yellow
+                    next_index = (next_index + 1) % noOfSignals  # Move to next signal
+
+                signals[i].signalText = time_until_green  # Show countdown until this signal turns green
+                screen.blit(redSignal, signalCoods[i])
+
+    # Display the countdown inside the signal
+            signalText = font.render(str(signals[i].signalText), True, white, black)
+            screen.blit(signalText, signalTimerCoods[i])
+
+
+        # Display the vehicles
         for vehicle in simulation:
             screen.blit(vehicle.image, [vehicle.x, vehicle.y])
             vehicle.move()
         pygame.display.update()
-
 
 Main()
