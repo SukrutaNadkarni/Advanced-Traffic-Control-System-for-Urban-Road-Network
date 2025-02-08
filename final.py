@@ -302,7 +302,7 @@ def generateVehicles():
     while (True):
         vehicle_type = random.randint(0, 3)
         x=5
-        if(x==random.randint(0,10)):
+        if(x==random.randint(0,30)):
             vehicle_type=4
         lane_number = random.randint(1, 2)
         temp = random.randint(0, 99)
