@@ -413,6 +413,16 @@ class Main:
                 screen.blit(countText, (screenWidth - 150, screenHeight - 50))  # Bottom-left corner
             elif i == 3:  # Up signal (bottom-right corner)
                 screen.blit(countText, (50, screenHeight - 50))  # Bottom-right corner
+        for i in range(0, noOfSignals):
+            w = font.render(f"Weight: {weighted[i]}", True, white, black)
+            if i == 0:  # Right signal (top-left corner)
+                screen.blit(w, (50, 75))  # Top-left corner
+            elif i == 1:  # Down signal (top-right corner)
+                screen.blit(w, (screenWidth - 150, 75))  # Top-right corner
+            elif i == 2:  # Left signal (bottom-left corner)
+                screen.blit(w, (screenWidth - 150, screenHeight - 75))  # Bottom-left corner
+            elif i == 3:  # Up signal (bottom-right corner)
+                screen.blit(w, (50, screenHeight - 75))  # Bottom-right corner
 
         # display the vehicles
         for vehicle in simulation:
