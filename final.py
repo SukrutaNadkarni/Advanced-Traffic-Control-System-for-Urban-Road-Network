@@ -302,7 +302,7 @@ def generateVehicles():
     while (True):
         vehicle_type = random.randint(0, 3)
         x=5
-        if(x==random.randint(0,30)):
+        if(x==random.randint(0,20)):
             vehicle_type=4
         lane_number = random.randint(1, 2)
         temp = random.randint(0, 99)
@@ -389,6 +389,17 @@ class Main:
                 screen.blit(countText, (screenWidth - 150, screenHeight - 50))  # Bottom-left corner
             elif i == 3:  # Up signal (bottom-right corner)
                 screen.blit(countText, (50, screenHeight - 50))  # Bottom-right corner
+        
+        for i in range(0, noOfSignals):
+            w = font.render(f"Weights: {weighted[i]}", True, white, black)
+            if i == 0:  # Right signal (top-left corner)
+                screen.blit(w, (50, 75))  # Top-left corner
+            elif i == 1:  # Down signal (top-right corner)
+                screen.blit(w, (screenWidth - 150, 75))  # Top-right corner
+            elif i == 2:  # Left signal (bottom-left corner)
+                screen.blit(w, (screenWidth - 150, screenHeight - 75))  # Bottom-left corner
+            elif i == 3:  # Up signal (bottom-right corner)
+                screen.blit(w, (50, screenHeight - 75))  # Bottom-right corner
 
         # display the vehicles
         for vehicle in simulation:
